@@ -1,27 +1,49 @@
+import {useQuery} from '@tanstack/react-query';
 import { useEffect, useState } from "react";
-
+import {Link} from 'react-router-dom';
+const fetchProducts=async()=>{
+      const response=await fetch('https://dummyjson.com/products');
+      const data=await response.json();
+      return data.products;
+};
 const Products=()=>{
-    const [products,setProducts]=useState([]);
-    const[isLoading,setIsLoading]=useState(false);
-    const[error,setError]=useState(null);
-    useEffect(()=>{
-        const fetchProducts=async()=>{
-            setIsLoading(true);
-            setError(null);
-            try{
-                const response=await fetch('https://dummyjson.com/products');
-                const data=await response.json();
-                setProducts(data.products);
-                setIsLoading(false);
-            }
-            catch(err){
-                setError(err.message);
-                setIsLoading(false);
-            }
+
+    const{
+      isLoading,
+      error,
+      data:products
+    }=useQuery({
+      queryKey:["products"],
+      queryFn:fetchProducts
+      // staleTime:1000
+    })
+    
+    
+    
+    
+    // const [products,setProducts]=useState([]);
+    // const[isLoading,setIsLoading]=useState(false);
+    // const[error,setError]=useState(null);
+
+
+    // useEffect(()=>{
+    //     const fetchProducts=async()=>{
+    //         setIsLoading(true);
+    //         setError(null);
+    //         try{
+    //             const response=await fetch('https://dummyjson.com/products');
+    //             const data=await response.json();
+    //             setProducts(data.products);
+    //             setIsLoading(false);
+    //         }
+    //         catch(err){
+    //             setError(err.message);
+    //             setIsLoading(false);
+    //         }
             
-        }
-        fetchProducts();
-    },[])
+    //     }
+    //     fetchProducts();
+    // },[])
     if(isLoading){
         return <h3>Loading....</h3>
     }
@@ -45,10 +67,10 @@ const Products=()=>{
             <div className="mt-4 flex justify-between">
               <div>
                 <h3 className="text-sm text-gray-700">
-                  <a href="">
+                  <Link to={`/products/${product.id}`}>
                     <span aria-hidden="true" className="absolute inset-0" />
                     {product.title}
-                  </a>
+                  </Link>
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">{product.category}</p>
               </div>
